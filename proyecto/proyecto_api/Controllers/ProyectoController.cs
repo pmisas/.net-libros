@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using proyecto_api.Datos;
 using proyecto_api.Modelos;
 using proyecto_api.Modelos.Dto;
@@ -23,17 +24,17 @@ namespace proyecto_api.Controllers
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public ActionResult<IEnumerable<ProyectoDto>> GetProyectos()
+        public async Task<ActionResult<IEnumerable<ProyectoDto>>> GetProyectos()
         {
             _logger.LogInformation("Obtener Obras");
-            return Ok(_db.Proyectos.ToList());
+            return Ok(await _db.Proyectos.ToListAsync());
         }
 
         [HttpGet("id:int", Name ="GetProyecto")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<ProyectoDto> GetProyecto(int id)
+        public async Task<ActionResult<ProyectoDto>> GetProyecto(int id)
         {
             if(id==0)
             {
@@ -41,7 +42,7 @@ namespace proyecto_api.Controllers
                 return BadRequest();
             }
             //var proyecto = ProyectoStore.proyectoList.FirstOrDefault(p => p.Id == id);
-            var proyecto = _db.Proyectos.FirstOrDefault(p => p.Id == id);
+            var proyecto = await _db.Proyectos.FirstOrDefaultAsync(p => p.Id == id);
 
             if(proyecto== null)
             {
@@ -54,14 +55,14 @@ namespace proyecto_api.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public ActionResult<ProyectoDto> CrearProyecto([FromBody] ProyectoDto proyectoDto)
+        public async Task<ActionResult<ProyectoDto>> CrearProyecto([FromBody] ProyectoDto proyectoDto)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            if (_db.Proyectos.FirstOrDefault(p=> p.Nombre.ToLower() == proyectoDto.Nombre.ToLower()) != null)
+            if (await _db.Proyectos.FirstOrDefaultAsync(p=> p.Nombre.ToLower() == proyectoDto.Nombre.ToLower()) != null)
             {
                 ModelState.AddModelError("NombreExistente", "El libro con este nombre ya existe!");
                 return BadRequest(ModelState);
@@ -72,14 +73,9 @@ namespace proyecto_api.Controllers
                 return BadRequest(proyectoDto);
             }
 
-            if (proyectoDto.Id > 0)
-            {
-                return StatusCode(StatusCodes.Status500InternalServerError);
-            }
-
             Proyecto modelo = new()
             {
-                Id = proyectoDto.Id,
+                //Id = proyectoDto.Id,
                 Nombre = proyectoDto.Nombre,
                 Descripcion = proyectoDto.Descripcion,
                 Terminado = proyectoDto.Terminado,
@@ -87,10 +83,10 @@ namespace proyecto_api.Controllers
 
             };
 
-            _db.Proyectos.Add(modelo);
-            _db.SaveChanges();
+            await _db.Proyectos.AddAsync(modelo);
+            await _db.SaveChangesAsync();
 
-            return CreatedAtRoute("GetProyecto", new {id= proyectoDto.Id}, proyectoDto);
+            return CreatedAtRoute("GetProyecto", new {id= modelo.Id}, modelo);
 
         }
 
@@ -98,20 +94,20 @@ namespace proyecto_api.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult DeleteProyecto(int id)
+        public async Task<IActionResult> DeleteProyecto(int id)
         {
             if(id == 0)
             {
                 return BadRequest();
             }
-            var proyecto = _db.Proyectos.FirstOrDefault(p=> p.Id == id);
+            var proyecto = await _db.Proyectos.FirstOrDefaultAsync(p=> p.Id == id);
             
             if (proyecto == null)
             {
                 return NotFound();
             }
             _db.Proyectos.Remove(proyecto);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
 
             return NoContent();
         }
@@ -119,7 +115,7 @@ namespace proyecto_api.Controllers
         [HttpPut("{id:int}")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdateProyecto(int id, [FromBody] ProyectoDto proyectoDto)
+        public async Task<IActionResult> UpdateProyecto(int id, [FromBody] ProyectoUpdateDto proyectoDto)
         {
             if (proyectoDto == null || proyectoDto.Id != id)
             {
@@ -143,8 +139,8 @@ namespace proyecto_api.Controllers
                 Autor = proyectoDto.Autor,
             };
 
-            _db.Proyectos.Update(modelo);
-            _db.SaveChanges();
+            await _db.Proyectos.AddAsync(modelo);
+            await _db.SaveChangesAsync();
             return NoContent();
         }
         
@@ -152,7 +148,7 @@ namespace proyecto_api.Controllers
         [Route("{id:int}UpdatePartial")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public IActionResult UpdatePartialProyecto(int id, [FromBody]  JsonPatchDocument<ProyectoDto> patchDto)
+        public async Task<IActionResult> UpdatePartialProyecto(int id, [FromBody]  JsonPatchDocument<ProyectoUpdateDto> patchDto)
         {
 
             if (patchDto == null || id == 0)
@@ -160,14 +156,14 @@ namespace proyecto_api.Controllers
                 return BadRequest();
             }
 
-            var proyecto = _db.Proyectos.FirstOrDefault(p => p.Id == id);
+            var proyecto = await _db.Proyectos.FirstOrDefaultAsync(p => p.Id == id);
 
             if (proyecto == null)
             {
                 return NotFound();
             }
 
-            var libroDto = new ProyectoDto
+            var libroDto = new ProyectoUpdateDto
             {
                 Id = proyecto.Id,
                 Nombre = proyecto.Nombre,
@@ -193,7 +189,7 @@ namespace proyecto_api.Controllers
             proyecto.Autor = libroDto.Autor;
 
             _db.Proyectos.Update(proyecto);
-            _db.SaveChanges();
+            await _db.SaveChangesAsync();
             return NoContent();
         }
 
