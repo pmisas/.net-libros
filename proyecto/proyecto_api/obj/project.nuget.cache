@@ -1,9 +1,11 @@
 {
   "version": 2,
-  "dgSpecHash": "qtuV4n2EOEU6myUYSVFz7/G4aQKWG+sZpA5IInmfARq/zaeJUYEB1nvI+kSEKO63ZsEqnJCckl8+EU0yeY39FA==",
+  "dgSpecHash": "sQe6eZqNKLJbaEiTi5XqHQm5APnk0M3wRlfsjNCRPOK1MByg63ZG3JlVitsz/Rkv/4m2hKAaXu5Ww3CffxiyeQ==",
   "success": true,
   "projectFilePath": "C:\\Users\\paula\\Documents\\GitHub\\.net-libros\\proyecto\\proyecto_api\\proyecto_api.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\paula\\.nuget\\packages\\automapper\\12.0.1\\automapper.12.0.1.nupkg.sha512",
+    "C:\\Users\\paula\\.nuget\\packages\\automapper.extensions.microsoft.dependencyinjection\\12.0.1\\automapper.extensions.microsoft.dependencyinjection.12.0.1.nupkg.sha512",
     "C:\\Users\\paula\\.nuget\\packages\\azure.core\\1.25.0\\azure.core.1.25.0.nupkg.sha512",
     "C:\\Users\\paula\\.nuget\\packages\\azure.identity\\1.7.0\\azure.identity.1.7.0.nupkg.sha512",
     "C:\\Users\\paula\\.nuget\\packages\\humanizer.core\\2.14.1\\humanizer.core.2.14.1.nupkg.sha512",

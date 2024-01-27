@@ -280,3 +280,5 @@ C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\obj\Debug\net8
 C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\obj\Debug\net8.0\proyecto_api.genruntimeconfig.cache
 C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\obj\Debug\net8.0\ref\proyecto_api.dll
 C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\obj\Debug\net8.0\proyecto_api.sourcelink.json
+C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\bin\Debug\net8.0\AutoMapper.dll
+C:\Users\paula\Documents\GitHub\.net-libros\proyecto\proyecto_api\bin\Debug\net8.0\AutoMapper.Extensions.Microsoft.DependencyInjection.dll
